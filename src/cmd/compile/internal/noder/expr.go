@@ -41,6 +41,8 @@ func constExprOp(expr syntax.Expr) ir.Op {
 			return unOps[expr.Op]
 		}
 		return binOps[expr.Op]
+	case *syntax.TernaryExpr:
+		return ir.OTERNARY
 	}
 }
 

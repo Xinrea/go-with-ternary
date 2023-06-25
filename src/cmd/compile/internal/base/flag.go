@@ -53,6 +53,7 @@ type CountFlag int
 // CountFlag (for a counting flag), and func(string) (for a flag that uses special code for parsing).
 type CmdFlags struct {
 	// Single letters
+	A CountFlag    "help:\"see this custom message\""
 	B CountFlag    "help:\"disable bounds checking\""
 	C CountFlag    "help:\"disable printing of columns in error messages\""
 	D string       "help:\"set relative `path` for local imports\""

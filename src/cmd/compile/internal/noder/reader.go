@@ -2311,7 +2311,15 @@ func (r *reader) expr() (res ir.Node) {
 			return typed(typ.Type(), assert)
 		}
 		return typecheck.Expr(ir.NewTypeAssertExpr(pos, x, typ.Type()))
-
+	case exprTernary:
+		pos := r.pos()
+		cond := r.expr()
+		x := r.expr()
+		y := r.expr()
+		t := r.typ()
+		n := typecheck.Expr(ir.NewTernaryExpr(pos, cond, x, y))
+		n.SetType(t)
+		return n
 	case exprUnaryOp:
 		op := r.op()
 		pos := r.pos()

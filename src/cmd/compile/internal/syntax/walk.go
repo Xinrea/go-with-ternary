@@ -157,6 +157,10 @@ func (w walker) node(n Node) {
 		}
 		w.node(n.X)
 
+	case *TernaryExpr:
+		w.node(n.Cond)
+		w.node(n.X)
+		w.node(n.Y)
 	case *Operation:
 		w.node(n.X)
 		if n.Y != nil {

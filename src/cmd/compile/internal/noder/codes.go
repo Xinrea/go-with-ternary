@@ -49,6 +49,7 @@ const (
 	exprIndex
 	exprSlice
 	exprAssert
+	exprTernary
 	exprUnaryOp
 	exprBinaryOp
 	exprCall

@@ -20,14 +20,19 @@ import (
 )
 
 var (
-	fast   = flag.Bool("fast", false, "parse package files in parallel")
-	verify = flag.Bool("verify", false, "verify idempotent printing")
-	src_   = flag.String("src", "parser.go", "source file to parse")
-	skip   = flag.String("skip", "", "files matching this regular expression are skipped by TestStdLib")
+	fast     = flag.Bool("fast", false, "parse package files in parallel")
+	verify   = flag.Bool("verify", false, "verify idempotent printing")
+	src_     = flag.String("src", "parser.go", "source file to parse")
+	ternary_ = flag.String("ternary", "testdata/ternary.go", "file with ternary op to parse")
+	skip     = flag.String("skip", "", "files matching this regular expression are skipped by TestStdLib")
 )
 
 func TestParse(t *testing.T) {
 	ParseFile(*src_, func(err error) { t.Error(err) }, nil, 0)
+}
+
+func TestTernary(t *testing.T) {
+	ParseFile(*ternary_, func(err error) { t.Error(err) }, nil, 0)
 }
 
 func TestVerify(t *testing.T) {

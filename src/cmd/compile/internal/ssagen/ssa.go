@@ -3005,6 +3005,31 @@ func (s *state) exprCheckPtr(n ir.Node, checkPtrOK bool) *ssa.Value {
 			bt = bt.ToUnsigned()
 		}
 		return s.newValue2(s.ssaShiftOp(n.Op(), n.Type(), bt), a.Type, a, b)
+	case ir.OTERNARY:
+		n := n.(*ir.TernaryExpr)
+		// Cond ? X : Y
+		// var = Y
+		// if Cond {
+		//     var = X
+		// }
+		cond := s.expr(n.Cond)
+		x := s.expr(n.X)
+		s.vars[n] = x
+		b := s.endBlock()
+		b.Kind = ssa.BlockIf
+		b.SetControl(cond)
+
+		bRight := s.f.NewBlock(ssa.BlockPlain)
+		bResult := s.f.NewBlock(ssa.BlockPlain)
+		b.AddEdgeTo(bResult)
+		b.AddEdgeTo(bRight)
+		s.startBlock(bRight)
+		y := s.expr(n.Y)
+		s.vars[n] = y
+		b = s.endBlock()
+		b.AddEdgeTo(bResult)
+		s.startBlock(bResult)
+		return s.variable(n, n.Type())
 	case ir.OANDAND, ir.OOROR:
 		// To implement OANDAND (and OOROR), we introduce a
 		// new temporary variable to hold the result. The

@@ -274,6 +274,7 @@ const (
 	OFOR      // for Init; Cond; Post { Body }
 	OGOTO     // goto Label
 	OIF       // if Init; Cond { Then } else { Else }
+	OTERNARY  // Cond ? Then : Else
 	OLABEL    // Label:
 	OGO       // go Call
 	ORANGE    // for Key, Value = range X { Body }

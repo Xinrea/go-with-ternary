@@ -295,6 +295,9 @@ func (check *Checker) updateExprType0(parent, x syntax.Expr, typ Type, final boo
 	// 		break
 	// 	}
 	// 	check.updateExprType0(x, x.X, typ, final)
+	case *syntax.TernaryExpr:
+		check.updateExprType0(x, x.X, typ, final)
+		check.updateExprType0(x, x.Y, typ, final)
 
 	case *syntax.Operation:
 		if x.Y == nil {
@@ -791,6 +794,34 @@ func init() {
 		syntax.AndAnd: allBoolean,
 		syntax.OrOr:   allBoolean,
 	}
+}
+
+func (check *Checker) ternary(op *operand, cond, x, y syntax.Expr) {
+	var c operand
+	check.expr(nil, &c, cond)
+	if c.mode == invalid {
+		return
+	}
+	if !isBoolean(c.typ) {
+		check.errorf(&c, MismatchedTypes, "non-boolean condition in ternary operation")
+		return
+	}
+	var a, b operand
+	check.expr(nil, &a, x)
+	check.expr(nil, &b, y)
+	if a.mode == invalid || b.mode == invalid {
+		return
+	}
+	check.matchTypes(&a, &b)
+	if a.mode == invalid {
+		return
+	}
+	if !Identical(a.typ, b.typ) {
+		check.errorf(&a, MismatchedTypes, "mismatched types in ternary choices: %s and %s", a.typ, b.typ)
+		return
+	}
+	op.typ = a.typ
+	op.mode = value
 }
 
 // If e != nil, it must be the binary expression; it may be nil for non-constant expressions
@@ -1470,7 +1501,11 @@ func (check *Checker) exprInternal(T Type, x *operand, e syntax.Expr, hint Type)
 		// times the same expression and type are recorded. It is also not a
 		// performance issue because we only reach here for composite literal
 		// types, which are comparatively rare.
-
+	case *syntax.TernaryExpr:
+		check.ternary(x, e.Cond, e.X, e.Y)
+		if x.mode == invalid {
+			goto Error
+		}
 	default:
 		panic(fmt.Sprintf("%s: unknown expression type %T", atPos(e), e))
 	}

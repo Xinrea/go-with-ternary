@@ -516,6 +516,18 @@ func typecheck1(n ir.Node, top int) ir.Node {
 		}
 		return n
 
+	case ir.OTERNARY:
+		n := n.(*ir.TernaryExpr)
+		n.X, n.Y, n.Cond = Expr(n.X), Expr(n.Y), Expr(n.Cond)
+		if n.Cond.Type() != nil && !n.Cond.Type().IsBoolean() {
+			base.Errorf("non-bool %s (type %v) used as condition", n.Cond, n.Cond.Type())
+			n.SetType(nil)
+			return n
+		}
+		if n.Cond.Type().IsUntyped() {
+			n.Cond.SetType(types.Types[types.TBOOL])
+		}
+		return n
 	// binary operators
 	case ir.OADD, ir.OAND, ir.OANDNOT, ir.ODIV, ir.OMOD, ir.OMUL, ir.OOR, ir.OSUB, ir.OXOR:
 		n := n.(*ir.BinaryExpr)

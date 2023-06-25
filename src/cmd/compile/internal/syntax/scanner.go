@@ -168,7 +168,9 @@ redo:
 		s.nextch()
 		s.nlsemi = true
 		s.tok = _Rbrace
-
+	case '?':
+		s.nextch()
+		s.tok = _Question
 	case ':':
 		s.nextch()
 		if s.ch == '=' {

@@ -1803,6 +1803,13 @@ func (w *writer) expr(expr syntax.Expr) {
 		w.pos(expr)
 		w.exprType(iface, expr.Type)
 		w.rtype(iface)
+	case *syntax.TernaryExpr:
+		w.Code(exprTernary)
+		w.pos(expr)
+		w.expr(expr.Cond)
+		w.expr(expr.X)
+		w.expr(expr.Y)
+		w.typ(expr.GetTypeInfo().Type)
 
 	case *syntax.Operation:
 		if expr.Y == nil {

@@ -81,6 +81,12 @@ func Assert(pos src.XPos, x ir.Node, typ *types.Type) ir.Node {
 	return typed(typ, ir.NewTypeAssertExpr(pos, x, nil))
 }
 
+func Ternary(pos src.XPos, cond, x, y ir.Node) *ir.TernaryExpr {
+	n := ir.NewTernaryExpr(pos, cond, x, y)
+	typed(x.Type(), n)
+	return n
+}
+
 func Binary(pos src.XPos, op ir.Op, typ *types.Type, x, y ir.Node) *ir.BinaryExpr {
 	switch op {
 	case ir.OADD:

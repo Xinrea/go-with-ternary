@@ -451,7 +451,8 @@ func (p *printer) printRawNode(n Node) {
 			// to control possibly missing parentheses
 			p.print(n.X, blank, n.Op, blank, n.Y)
 		}
-
+	case *TernaryExpr:
+		p.print(n.Cond, blank, _Question, blank, n.X, blank, _Colon, blank, n.Y)
 	case *KeyValueExpr:
 		p.print(n.Key, _Colon, blank, n.Value)
 

@@ -115,6 +115,21 @@ func NewBasicLit(pos src.XPos, val constant.Value) Node {
 func (n *BasicLit) Val() constant.Value       { return n.val }
 func (n *BasicLit) SetVal(val constant.Value) { n.val = val }
 
+type TernaryExpr struct {
+	miniExpr
+	Cond  Node
+	X     Node
+	Y     Node
+	RType Node `mknode:"-"` // see reflectdata/helpers.go
+}
+
+func NewTernaryExpr(pos src.XPos, cond, x, y Node) *TernaryExpr {
+	n := &TernaryExpr{Cond: cond, X: x, Y: y}
+	n.pos = pos
+	n.op = OTERNARY
+	return n
+}
+
 // A BinaryExpr is a binary expression X Op Y,
 // or Op(X, Y) for builtin functions that do not become calls.
 type BinaryExpr struct {

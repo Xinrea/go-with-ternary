@@ -1635,6 +1635,55 @@ func (n *TailCallStmt) editChildrenWithHidden(edit func(Node) Node) {
 	}
 }
 
+func (n *TernaryExpr) Format(s fmt.State, verb rune) { fmtNode(n, s, verb) }
+func (n *TernaryExpr) copy() Node {
+	c := *n
+	c.init = copyNodes(c.init)
+	return &c
+}
+func (n *TernaryExpr) doChildren(do func(Node) bool) bool {
+	if doNodes(n.init, do) {
+		return true
+	}
+	if n.Cond != nil && do(n.Cond) {
+		return true
+	}
+	if n.X != nil && do(n.X) {
+		return true
+	}
+	if n.Y != nil && do(n.Y) {
+		return true
+	}
+	return false
+}
+func (n *TernaryExpr) editChildren(edit func(Node) Node) {
+	editNodes(n.init, edit)
+	if n.Cond != nil {
+		n.Cond = edit(n.Cond).(Node)
+	}
+	if n.X != nil {
+		n.X = edit(n.X).(Node)
+	}
+	if n.Y != nil {
+		n.Y = edit(n.Y).(Node)
+	}
+}
+func (n *TernaryExpr) editChildrenWithHidden(edit func(Node) Node) {
+	editNodes(n.init, edit)
+	if n.Cond != nil {
+		n.Cond = edit(n.Cond).(Node)
+	}
+	if n.X != nil {
+		n.X = edit(n.X).(Node)
+	}
+	if n.Y != nil {
+		n.Y = edit(n.Y).(Node)
+	}
+	if n.RType != nil {
+		n.RType = edit(n.RType).(Node)
+	}
+}
+
 func (n *TypeAssertExpr) Format(s fmt.State, verb rune) { fmtNode(n, s, verb) }
 func (n *TypeAssertExpr) copy() Node {
 	c := *n
